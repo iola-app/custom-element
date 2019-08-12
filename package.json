@@ -1,0 +1,25 @@
+{
+  "name": "@iola/custom-element",
+  "version": "0.1.0",
+  "description": "Custom Element wrapper around React Components",
+  "module": "lib/index.js",
+  "author": "iola",
+  "license": "ISC",
+  "scripts": {
+    "build": "babel src -d lib"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.2",
+    "react-dom": ">=16.8.2"
+  },
+  "dependencies": {
+    "camelcase": "^5.3.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-optional-chaining": "^7.2.0",
+    "@babel/preset-env": "^7.5.5"
+  }
+}
