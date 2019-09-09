@@ -1,5 +1,5 @@
 /**
  * Identity function - just for syntax highlighting
  */
-export const css = (css) => css.toString();
+export declare const css: (css: TemplateStringsArray) => string;
 export default css;
