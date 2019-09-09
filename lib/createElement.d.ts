@@ -1,6 +1,6 @@
 import React from 'react';
 import { AttributesMap } from './extractAttributes';
-export declare type Options<P> = {
+export declare type Options<P = {}> = {
     extends?: string;
     attrs?: string[];
     methods?: string[];

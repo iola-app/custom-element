@@ -2,7 +2,7 @@ type ElementMap = {
   [tag: string]: typeof HTMLElement;
 }
 
-export function defineElements(elements: ElementMap): void {
+export const defineElements = (elements: ElementMap): void => {
   for (const tag in elements) {
     try {
       customElements.define(tag, elements[tag]);
