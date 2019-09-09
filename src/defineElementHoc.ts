@@ -10,7 +10,7 @@ type DefineOptions = Options & {
 /**
  * @deprecated Use `createElement` and `defineElements` instead
  */
-export const defineElementHoc = (options: DefineOptions) => (Component: ComponentType) => {
+export const defineElementHoc = (options: DefineOptions) => (Component: ComponentType<any>) => {
   defineElements({ [options.tag]: createElement(Component, options) });
 };
 

@@ -6,5 +6,5 @@ declare type DefineOptions = Options & {
 /**
  * @deprecated Use `createElement` and `defineElements` instead
  */
-export declare const defineElementHoc: (options: DefineOptions) => (Component: ComponentType<{}>) => void;
+export declare const defineElementHoc: (options: DefineOptions) => (Component: ComponentType<any>) => void;
 export default defineElementHoc;

@@ -7,5 +7,5 @@ export declare type Options<P = {}> = {
     styles?: string | string[];
     props?: (attributes: AttributesMap, element: HTMLElement) => P;
 };
-export declare function createElement<T extends React.ComponentType>(Component: T, options?: Options<React.ComponentProps<T>>): typeof HTMLElement;
+export declare function createElement<T extends React.ComponentType<any>>(Component: T, options?: Options<React.ComponentProps<T>>): typeof HTMLElement;
 export default createElement;

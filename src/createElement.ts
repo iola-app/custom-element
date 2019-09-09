@@ -17,7 +17,7 @@ type FunctionMap = {
 const componentInstanceSymbol = Symbol('React component instance');
 const shadowRootSymbol = Symbol('Shadow root symbol');
 
-export function createElement<T extends React.ComponentType>(
+export function createElement<T extends React.ComponentType<any>>(
   Component: T, options: Options<React.ComponentProps<T>> = {}
 ): typeof HTMLElement {
   const observedAttributes = options.attrs || [];
