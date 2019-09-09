@@ -21,10 +21,20 @@ export function createElement<T extends React.ComponentType>(
   Component: T, options: Options<React.ComponentProps<T>> = {}
 ): typeof HTMLElement {
   const observedAttributes = options.attrs || [];
-
-  let styles = Array.isArray(options.styles) ? options.styles : (
+  const styles = Array.isArray(options.styles) ? options.styles : (
     options.styles ? [options.styles] : []
   );
+
+  function render(this: CustomElement) {
+    const element = this;
+    const attributes = extractAttributes(observedAttributes, this);
+    const props = options.props ? options.props(attributes, this) : attributes;
+    const reactElement = React.createElement(Component, props as React.Attributes);
+
+    return ReactDom.render(reactElement, this[shadowRootSymbol] as any, function(this: T) {
+      element[componentInstanceSymbol] = this;
+    });
+  }
 
   class CustomElement extends HTMLElement {
     static observedAttributes = observedAttributes;
@@ -33,7 +43,7 @@ export function createElement<T extends React.ComponentType>(
     [shadowRootSymbol] = this.attachShadow({ mode: 'open' });
 
     connectedCallback() {
-      this.render();
+      render.call(this);
 
       /**
        * Add styles to the shadow root
@@ -47,22 +57,11 @@ export function createElement<T extends React.ComponentType>(
     }
 
     attributeChangedCallback() {
-      this.render();
+      render.call(this);
     }
 
     disconnectedCallback() {
       ReactDom.unmountComponentAtNode(this[shadowRootSymbol] as any);
-    }
-
-    private render() {
-      const element = this;
-      const attributes = extractAttributes(observedAttributes, this);
-      const props = options.props ? options.props(attributes, this) : attributes;
-      const reactElement = React.createElement(Component, props as React.Attributes);
-
-      return ReactDom.render(reactElement, this[shadowRootSymbol] as any, function(this: T) {
-        element[componentInstanceSymbol] = this;
-      });
     }
   }
 
@@ -76,7 +75,7 @@ export function createElement<T extends React.ComponentType>(
       };
     }
 
-    CustomElement.prototype = Object.assign(CustomElement.prototype, proto);
+    Object.assign(CustomElement.prototype, proto);
   }
 
   return CustomElement;
