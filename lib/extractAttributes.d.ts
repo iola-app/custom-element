@@ -1,5 +1,3 @@
-export declare type AttributesMap = {
-    [name: string]: string | undefined;
-};
-export declare const extractAttributes: (attrs: string[], element: HTMLElement) => AttributesMap;
+export declare type AttributesMap = Record<string, string | undefined>;
+export declare const extractAttributes: (attrs: string[], element: HTMLElement) => Record<string, string | undefined>;
 export default extractAttributes;

@@ -2,16 +2,12 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import extractAttributes, { AttributesMap } from './extractAttributes';
 
+type FunctionMap = Record<string, Function>;
 export type Options<P = {}> = {
-  extends?: string;
   attrs?: string[];
-  methods?: string[];
   styles?: string | string[];
+  methods?: string[];
   props?: (attributes: AttributesMap, element: HTMLElement) => P;
-};
-
-type FunctionMap = {
-  [key: string]: Function;
 };
 
 const componentInstanceSymbol = Symbol('React component instance');
@@ -26,14 +22,14 @@ export function createElement<T extends React.ComponentType<any>>(
   );
 
   function render(this: CustomElement) {
-    const element = this;
     const attributes = extractAttributes(observedAttributes, this);
     const props = options.props ? options.props(attributes, this) : attributes;
-    const reactElement = React.createElement(Component, props as React.Attributes);
+    const ref = options.methods && options.methods.length
+      ? (componentInstance: T) => { this[componentInstanceSymbol] = componentInstance }
+      : undefined;
+    const reactElement = React.createElement(Component, { ...props, ref } as React.Attributes);
 
-    return ReactDom.render(reactElement, this[shadowRootSymbol] as any, function(this: T) {
-      element[componentInstanceSymbol] = this;
-    });
+    ReactDom.render(reactElement, this[shadowRootSymbol] as any);
   }
 
   class CustomElement extends HTMLElement {
