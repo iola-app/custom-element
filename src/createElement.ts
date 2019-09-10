@@ -2,19 +2,41 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import extractAttributes, { AttributesMap } from './extractAttributes';
 
-type FunctionMap = Record<string, Function>;
-export type Options<P = {}> = {
-  attrs?: string[];
-  styles?: string | string[];
-  methods?: string[];
-  props?: (attributes: AttributesMap, element: HTMLElement) => P;
-};
-
 const componentInstanceSymbol = Symbol('React component instance');
 const shadowRootSymbol = Symbol('Shadow root symbol');
 
+type FunctionMap<T = Function> = Record<string, T>;
+type CommonOptions<C extends React.ComponentType> = {
+  attrs?: string[];
+  styles?: string | string[];
+  props?: (attributes: AttributesMap, element: HTMLElement) => React.ComponentProps<C>;
+}
+type FunctionalComponentOptions = {};
+type ClassComponentOptions = { methods?: string[] };
+
+export type Options<C extends React.ComponentType> = (
+  CommonOptions<C> & ClassComponentOptions & FunctionalComponentOptions
+);
+
+/**
+ * Signature for functional components
+ */
+export function createElement<T extends React.FunctionComponent<any>>(
+  Component: T, options: CommonOptions<T> & FunctionalComponentOptions
+): typeof HTMLElement;
+
+/**
+ * Signature for class components
+ */
+export function createElement<T extends React.ComponentClass<any>>(
+  Component: T, options: CommonOptions<T> & ClassComponentOptions
+): typeof HTMLElement;
+
+/**
+ * Generic signature
+ */
 export function createElement<T extends React.ComponentType<any>>(
-  Component: T, options: Options<React.ComponentProps<T>> = {}
+  Component: T, options: Options<T> = {}
 ): typeof HTMLElement {
   const observedAttributes = options.attrs || [];
   const styles = Array.isArray(options.styles) ? options.styles : (
@@ -64,7 +86,7 @@ export function createElement<T extends React.ComponentType<any>>(
   if (options.methods) {
     const proto: FunctionMap = {};
     for (const methodName of options.methods) {
-      proto[methodName] = function(this: CustomElement, ...args: unknown[]) {
+      proto[methodName] = function(this: CustomElement, ...args: any[]) {
         const component: FunctionMap = this[componentInstanceSymbol] as any;
 
         return component[methodName] && component[methodName](...args);
