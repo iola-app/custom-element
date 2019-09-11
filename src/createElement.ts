@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDom from 'react-dom';
+import { FunctionKeys, NonUndefined, Subtract } from 'utility-types';
 import extractAttributes, { AttributesMap } from './extractAttributes';
 
 const componentInstanceSymbol = Symbol('React component instance');
@@ -13,7 +14,7 @@ interface CommonOptions<T extends React.ComponentType> {
 
 interface FunctionComponentOptions<T extends React.FC> extends CommonOptions<T> {}
 interface ClassComponentOptions<T extends React.ComponentClass> extends CommonOptions<T> {
-  methods?: string[]
+  methods?: NonUndefined<FunctionKeys<Subtract<InstanceType<T>, React.Component>>>[]
 };
 
 export type Options<T extends React.ComponentType = React.ComponentClass> = (
