@@ -1,8 +1,7 @@
 import React from 'react';
 import { AttributesMap } from './extractAttributes';
-declare type MethodsAttribute<T> = keyof T;
 interface CommonOptions<T extends React.ComponentType> {
-    attrs?: MethodsAttribute<T>;
+    attrs?: string[];
     styles?: string | string[];
     props?: (attributes: AttributesMap, element: HTMLElement) => React.ComponentProps<T>;
 }
