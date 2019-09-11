@@ -1,4 +1,4 @@
-import React, { ComponentProps, ComponentClass, ComponentType, FunctionComponent } from 'react';
+import React from 'react';
 import ReactDom from 'react-dom';
 import { FunctionKeys, NonUndefined, Subtract } from 'utility-types';
 import extractAttributes, { AttributesMap } from './extractAttributes';
@@ -6,10 +6,14 @@ import extractAttributes, { AttributesMap } from './extractAttributes';
 const componentInstanceSymbol = Symbol('React component instance');
 const shadowRootSymbol = Symbol('Shadow root symbol');
 
+type ComponentType = React.ComponentType<any>;
+type FunctionComponent = React.FunctionComponent<any>;
+type ComponentClass = React.ComponentClass<any>;
+
 interface CommonOptions<T extends ComponentType> {
   attrs?: string[];
   styles?: string | string[];
-  props?: (attributes: AttributesMap, element: HTMLElement) => ComponentProps<T>;
+  props?: (attributes: AttributesMap, element: HTMLElement) => React.ComponentProps<T>;
 }
 
 interface FunctionComponentOptions<T extends FunctionComponent> extends CommonOptions<T> {}
@@ -17,7 +21,7 @@ interface ClassComponentOptions<T extends ComponentClass> extends CommonOptions<
   methods?: NonUndefined<FunctionKeys<Subtract<InstanceType<T>, React.Component>>>[]
 };
 
-export type Options<T extends ComponentType = ComponentClass> = (
+export type Options<T extends ComponentType = React.ComponentClass> = (
   T extends FunctionComponent ? FunctionComponentOptions<T>:
   T extends ComponentClass ? ClassComponentOptions<T>:
   never
