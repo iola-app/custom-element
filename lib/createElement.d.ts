@@ -1,21 +1,19 @@
 import React from 'react';
 import { AttributesMap } from './extractAttributes';
-declare type CommonOptions<C extends React.ComponentType> = {
-    attrs?: string[];
+declare type MethodsAttribute<T> = keyof T;
+interface CommonOptions<T extends React.ComponentType> {
+    attrs?: MethodsAttribute<T>;
     styles?: string | string[];
-    props?: (attributes: AttributesMap, element: HTMLElement) => React.ComponentProps<C>;
-};
-declare type FunctionalComponentOptions = {};
-declare type ClassComponentOptions = {
+    props?: (attributes: AttributesMap, element: HTMLElement) => React.ComponentProps<T>;
+}
+interface FunctionComponentOptions<T extends React.FC> extends CommonOptions<T> {
+}
+interface ClassComponentOptions<T extends React.ComponentClass> extends CommonOptions<T> {
     methods?: string[];
-};
-export declare type Options<C extends React.ComponentType> = (CommonOptions<C> & ClassComponentOptions & FunctionalComponentOptions);
+}
+export declare type Options<T extends React.ComponentType = React.ComponentClass> = (T extends React.FC ? FunctionComponentOptions<T> : T extends React.ComponentClass ? ClassComponentOptions<T> : never);
 /**
- * Signature for functional components
+ * Declaration signature
  */
-export declare function createElement<T extends React.FunctionComponent<any>>(Component: T, options: CommonOptions<T> & FunctionalComponentOptions): typeof HTMLElement;
-/**
- * Signature for class components
- */
-export declare function createElement<T extends React.ComponentClass<any>>(Component: T, options: CommonOptions<T> & ClassComponentOptions): typeof HTMLElement;
+export declare function createElement<T extends React.ComponentType>(Component: T, options?: Options<T>): typeof HTMLElement;
 export default createElement;

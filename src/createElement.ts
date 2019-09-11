@@ -5,38 +5,37 @@ import extractAttributes, { AttributesMap } from './extractAttributes';
 const componentInstanceSymbol = Symbol('React component instance');
 const shadowRootSymbol = Symbol('Shadow root symbol');
 
-type FunctionMap<T = Function> = Record<string, T>;
-type CommonOptions<C extends React.ComponentType> = {
+interface CommonOptions<T extends React.ComponentType> {
   attrs?: string[];
   styles?: string | string[];
-  props?: (attributes: AttributesMap, element: HTMLElement) => React.ComponentProps<C>;
+  props?: (attributes: AttributesMap, element: HTMLElement) => React.ComponentProps<T>;
 }
-type FunctionalComponentOptions = {};
-type ClassComponentOptions = { methods?: string[] };
 
-export type Options<C extends React.ComponentType> = (
-  CommonOptions<C> & ClassComponentOptions & FunctionalComponentOptions
+interface FunctionComponentOptions<T extends React.FC> extends CommonOptions<T> {}
+interface ClassComponentOptions<T extends React.ComponentClass> extends CommonOptions<T> {
+  methods?: string[]
+};
+
+export type Options<T extends React.ComponentType = React.ComponentClass> = (
+  T extends React.FC ? FunctionComponentOptions<T>:
+  T extends React.ComponentClass ? ClassComponentOptions<T>:
+  never
 );
 
+type FunctionMap<T = Function> = Record<string, T>;
+
 /**
- * Signature for functional components
+ * Declaration signature
  */
-export function createElement<T extends React.FunctionComponent<any>>(
-  Component: T, options: CommonOptions<T> & FunctionalComponentOptions
+export function createElement<T extends React.ComponentType>(
+  Component: T, options?: Options<T>
 ): typeof HTMLElement;
 
 /**
- * Signature for class components
+ * Implementation signature ( class component )
  */
-export function createElement<T extends React.ComponentClass<any>>(
-  Component: T, options: CommonOptions<T> & ClassComponentOptions
-): typeof HTMLElement;
-
-/**
- * Generic signature
- */
-export function createElement<T extends React.ComponentType<any>>(
-  Component: T, options: Options<T> = {}
+export function createElement<T extends React.ComponentClass>(
+  Component: T, options: Options = {}
 ): typeof HTMLElement {
   const observedAttributes = options.attrs || [];
   const styles = Array.isArray(options.styles) ? options.styles : (
